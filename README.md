@@ -9,6 +9,7 @@
 - On Windows: venv\Scripts\activate
 - On macOS/Linux: source venv/bin/activate
 - Install the required packages: pip install -r req.txt
+- Run python createdb.py to Create Databse
 
 ## Usage
 - Start the Flask development server: flask run
