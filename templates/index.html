@@ -1,0 +1,353 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                
+                
+                    <!-- Content Row -->
+                    <div class="row">
+                
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <div class="col-md-12">
+                                                    <h2>Top-most parent</h2>
+                
+                                                    <form id="top-parent">
+                                                        <div class="form-group">
+                                                            <!-- <label for="categoryName">Enter Product Name</label> -->
+                                                            <input type="text" class="form-control" id="search-input"
+                                                                name="search-input" placeholder="Enter Item Code">
+                                                        </div>
+                                                        <h4 id="top-parent-result" style="display: none;"></h4>
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </form>
+                
+                                                </div>
+                
+                                            </div>
+                
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <div class="col-md-12">
+                                                    <h2>Sorted child products</h2>
+                
+                                                    <form id="sort-child">
+                                                        <div class="form-group">
+                                                            <!-- <label for="categoryName">Enter Product Name</label> -->
+                                                            <input type="text" class="form-control" id="child-search-input"
+                                                                name="search-input" placeholder="Enter Product Name">
+                                                        </div>
+                                                        <h6 id="sort-child-result" style="display: none;"></h6>
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </form>
+                
+                                                </div>
+                
+                                            </div>
+                
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <div class="col-md-12">
+                                                    <h2>Product Status</h2>
+                                                    <h4 style="color: #22db1b;" id="enabled">Enabled Products : </h4>
+                                                    <h4 style="color: #db1b1b;" id="disabled">Disabled Products : </h4>
+                                                   
+                
+                                                </div>
+                
+                                            </div>
+                
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                <div class="col-md-12">
+                                                    <h2>Average Price By Category</h2>
+                                                    <h4  id="top">TOP : </h4>
+                                                    <h4  id="panties">PANTIES : </h4>
+                                                    <h4  id="pants">PANTS : </h4>
+                                                   
+                
+                                                </div>
+                
+                                            </div>
+                
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+
+
+                    </div>
+                </div>
+
+                <script>
+                    $(document).ready(function() {
+                        $.ajax({
+                            url: '/active-inactive-count',
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                console.log(response);
+                                if (response) {
+                                    $('#enabled').text('Enabled Products :' + response['active_count']); 
+                                    $('#disabled').text('Disabled Products :' + response['inactive_count']); 
+                                    } 
+                              
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                // handle any errors
+                                console.error(textStatus, errorThrown);
+                            }
+                            });
+                    });
+
+                    (document).ready(function() {
+                        $.ajax({
+                            url: '/avg-price-by-category',
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                console.log(response);
+                                if (response) {
+                                    top_mrp = response['TOP'];
+                                    $('#top').text('TOP : ' + top_mrp['avg_price']); 
+                                    $('#panties').text('PANTIES : ' + top_mrp['PANTIES']); 
+                                    $('#pants').text('PANTS :' + top_mrp['PANTS']); 
+                                    } 
+                              
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                // handle any errors
+                                console.error(textStatus, errorThrown);
+                            }
+                            });
+                    });
+                    
+                    $(document).ready(function() {
+                        $('#top-parent').submit(function(event) {
+                            event.preventDefault(); // prevent the default form submission
+
+                            var query = $('#search-input').val(); // get the query word from the form input
+                            console.log(query);
+
+                            // construct the search results URL with the query word as a GET parameter
+                            var searchResultsUrl = '/parent/' + query;
+                            console.log(searchResultsUrl);
+
+                            $.ajax({
+                            url: searchResultsUrl,
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                // handle the response
+                                // $('#top-parent-result').text(response.result); // update the text content of the h4 element
+                                // $('#top-parent-result').show(); // show the h4 element
+                                console.log(response);
+                                if (response) {
+                                    $('#top-parent-result').text(response['top_parent']); // update the text content of the h4 element
+                                    } else {
+                                    $('#top-parent-result').text('No products found.'); // update the text content of the h4 element to display a message indicating no products were found
+                                    }
+                                $('#top-parent-result').show(); // show the h4 element
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                // handle any errors
+                                console.error(textStatus, errorThrown);
+                            }
+                            });
+
+
+                            
+                        });
+                    });
+
+                    $(document).ready(function() {
+                        $('#sort-child').submit(function(event) {
+                            event.preventDefault(); // prevent the default form submission
+
+                            var query = $('#child-search-input').val(); // get the query word from the form input
+                            console.log(query);
+
+                            // construct the search results URL with the query word as a GET parameter
+                            var searchResultsUrl = '/children/' + query;
+                            console.log(searchResultsUrl);
+
+                            $.ajax({
+                            url: searchResultsUrl,
+                            method: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                // handle the response
+                                // $('#top-parent-result').text(response.result); // update the text content of the h4 element
+                                // $('#top-parent-result').show(); // show the h4 element
+                                console.log(response);
+                                if (response) {
+                                    $('#sort-child-result').text(response['children']); // update the text content of the h4 element
+                                    } else {
+                                    $('#sort-child-result').text('No products found.'); // update the text content of the h4 element to display a message indicating no products were found
+                                    }
+                                $('#sort-child-result').show(); // show the h4 element
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                // handle any errors
+                                console.error(textStatus, errorThrown);
+                            }
+                            });
+
+
+                            
+                        });
+                    });
+                </script>
+
+            <div class="container">
+                <div class="row">
+    
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="float-left">
+                                        <h3 class="m-0  text-primary">Product List</h3>
+                                    </div>
+                                    <div class="float-right">
+                                        <form action="/upload" method="post" enctype="multipart/form-data" >
+                                            <input type="file" multiple accept="application/execl" name="file" required>
+                                            <button  type="submit" class="btn btn-secondary">Upload <img src="{{ url_for('static', filename='img/execl-icon.png') }}"  style="max-height: 30px;" alt=""></button>
+                                        </form>
+    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" >
+                            <div class="table-responsive"  >
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <a class="btn btn-danger" href="{{ url_for('reset') }}">Reset DB</a>
+                                    <thead>
+                                        <tr>
+                                            <th>Enabled</th>
+                                            <th>Item Code</th>
+                                            <th>Item Name</th>
+                                            <th>Category L1</th>
+                                            <th>Category L</th>
+                                            <th>UPC</th>
+                                            <th>Parent Code</th>
+                                            <th>MRP Price</th>
+                                            <th>Size</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Enabled</th>
+                                            <th>Item Code</th>
+                                            <th>Item Name</th>
+                                            <th>Category L1</th>
+                                            <th>Category L</th>
+                                            <th>UPC</th>
+                                            <th>Parent Code</th>
+                                            <th>MRP Price</th>
+                                            <th>Size</th>
+                                        </tr>
+                                        
+                                    </tfoot>
+                                    <tbody>
+                                        {% for product in products %}
+                                            <tr>
+                                                <td>
+                                                    {% if product.enabled  %}
+                                                        <button class="status-button" style="background-color: #22db1b; min-width: 60px;">Enabled</button>
+                                                    {% else %}
+                                                        <button class="status-button" style="background-color: #db1b1b; min-width: 60px;">Disabled</button>
+                                                    {% endif %}
+                                                </td>   
+                                                <td>{{ product.item_code }}</td>
+                                                <td>{{ product.item_name }}</td>
+                                                <td>{{ product.category_l1 }}</td>
+                                                <td>{{ product.category_l2 }}</td>
+                                                <td>{{ product.upc }}</td>
+                                                <td>{{ product.parent_code }}</td>
+                                                <td>{{ product.mrp_price }}</td>
+                                                <td>{{ product.size }}</td>
+
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+            
+
+
+
+
+
+
+
+                <style>
+                    .center {text-align: center;}
+                </style>
+                <style>
+                    .status-button{
+                         background-color: #4e73df;
+                         color: white;
+                         border: none;
+                         border-radius: 5px;
+                         padding: 5px;
+                         font-size: 12px;
+                         box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+                    }
+                 </style>
+                
+{% endblock %}             
+
