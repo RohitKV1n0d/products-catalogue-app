@@ -2,7 +2,7 @@
 
 
 ## Installation
-- Clone this repository to your local machine: git clone https://github.com/your-username/your-repo.git
+- Clone this repository to your local machine: git clone git@github.com:RohitKV1n0d/products-catalogue-app.git
 - Navigate to the project directory: cd your-repo
 - Create a virtual environment: python -m venv venv
 - Activate the virtual environment:
