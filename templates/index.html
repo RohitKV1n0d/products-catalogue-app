@@ -147,18 +147,16 @@
                             });
                     });
 
-                    (document).ready(function() {
+                    $(document).ready(function() {
                         $.ajax({
                             url: '/avg-price-by-category',
                             method: 'GET',
                             dataType: 'json',
                             success: function(response) {
-                                console.log(response);
                                 if (response) {
-                                    top_mrp = response['TOP'];
-                                    $('#top').text('TOP : ' + top_mrp['avg_price']); 
-                                    $('#panties').text('PANTIES : ' + top_mrp['PANTIES']); 
-                                    $('#pants').text('PANTS :' + top_mrp['PANTS']); 
+                                    $('#top').text('TOP : Rs ' +  String(parseFloat(response['TOP']['avg_price']).toFixed(2))); 
+                                    $('#panties').text('PANTIES : Rs ' + response['TOP']['PANTIES']); 
+                                    $('#pants').text('PANTS : Rs ' + response['TOP']['PANTS']); 
                                     } 
                               
                             },
